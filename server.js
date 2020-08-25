@@ -10,23 +10,19 @@ app.use(
   })
 );
 
-app.set("view engine", "ejs");
 
 app.use(main);
 
-app.use(
-  "/api",
-  proxy({
-    target: "http://localhost:8000",
-    changeOrigin: true,
-  })
-);
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 
 const PORT = process.env.PORT || 8000;
 
 const options = {
   useUnifiedTopology: true,
-  useNewUrlParser: true,
+  useNewUrlParser: true
 };
 
 mongoose.connect(config.databaseURL, options).then(() => {
