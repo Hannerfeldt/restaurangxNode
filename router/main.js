@@ -4,24 +4,38 @@ const router = express.Router();
 const BookingModel = require("../models/booking");
 const GuestModel = require("../models/guest");
 
-router.get("/", (req, res, next) => {
-  
-  next()
-})
+router.get("/",(req, res) => {
 
-router.post("/", async (req, res, next) => {
-  //   const guest = await GuestModel.findOne({
-  //       email: req.body.email
-  //   });
+ res.render("index");
 
-  // new GuestModel({
-  //   firstname: "Chabbe",
-  //   lastname: "Chabbsson",
-  //   email: "bigdick@email.se",
-  //   phoneNr: 590195313,
-  //   id: 1999,
-  // }).save();
-  next()
+});
+
+router.get("/guest", async (req, res) => {
+
+  const guest = await GuestModel.find()
+
+  res.send(guest);
+
+});
+
+router.get("/table", async (req, res) => {
+
+  const booking = await BookingModel.find()
+
+  res.send(booking);
+
+});
+
+router.post("/table", async (req, res) => {
+
+  new BookingModel({
+    count: 4,
+    date: new Date(2020, 08, 05),
+    time: 18.00,
+    guestId: 999,
+    id: 3,
+  }).save();
+
 });
 
 module.exports = router;

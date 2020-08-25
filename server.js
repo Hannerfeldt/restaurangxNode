@@ -3,6 +3,8 @@ const app = express();
 const mongoose = require("mongoose");
 const config = require("./config/config");
 const main = require("./router/main");
+const cors = require("cors");
+const bodyParser = require("body-parser");
 
 app.use(
   express.urlencoded({
@@ -10,13 +12,13 @@ app.use(
   })
 );
 
+app.use(cors())
+
+app.use(bodyParser.json());
+
+app.set("view engine", "ejs");
 
 app.use(main);
-
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  next();
-});
 
 const PORT = process.env.PORT || 8000;
 
