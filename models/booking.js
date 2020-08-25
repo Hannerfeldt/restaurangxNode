@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 let Schema = mongoose.Schema;
 
 const BookingSchema = new Schema({
-  amount: Number,
+  count: Number,
   date: Date,
   time: String,
   guestId: String,
