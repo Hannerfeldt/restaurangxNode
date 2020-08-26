@@ -28,19 +28,29 @@ router.get("/table", async (req, res) => {
 
 router.post("/table", async (req, res) => {
 
+  const booking = BookingModel.find({date: req.body.date, time: req.body.time});
+  console.log("XXXXXXXXXXXX CONSOLE LOG BOOKING", booking);
   new BookingModel({
-    count: 4,
-    date: new Date(2020, 08, 05),
-    time: 18.00,
+    count: req.body.count,
+    date: req.body.date,
+    time: req.body.time,
     guestId: 999,
-    id: 3,
+    id: 3
   }).save();
 
 });
 
 router.post("/guest", async (req, res) => {
 
-  console.log(req.body);
+  
+
+  new GuestModel({
+    firstname: req.body.firstname,
+    lastname: req.body.lastname,
+    email: req.body.email,
+    phonenr: req.body.phonenr,
+    id: 0
+  }).save();
 
 });
 
