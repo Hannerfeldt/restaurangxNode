@@ -38,4 +38,10 @@ router.post("/table", async (req, res) => {
 
 });
 
+router.post("/guest", async (req, res) => {
+
+  console.log(req.body);
+
+});
+
 module.exports = router;
