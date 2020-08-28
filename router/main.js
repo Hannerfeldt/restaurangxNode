@@ -3,7 +3,7 @@ const router = express.Router();
 
 const BookingModel = require("../models/booking");
 const GuestModel = require("../models/guest");
-const Booking = require("../models/booking");
+
 
 router.get("/", (req, res) => {
 
@@ -86,22 +86,21 @@ router.post("/guest", async (req, res) => {
 });
 
 router.post("/deleteall", async (req, res) => {
-
   await BookingModel.deleteMany({})
   await GuestModel.deleteMany({})
 })
 
 router.post("/availablility", async (req, res) => {
 
-  const available = BookingModel.find({
+  BookingModel.find({
     date: req.body.date,
     time: req.body.time
-  }).then(items => {
-    let amount = 0
-    items.forEach(item => {
-      amount += item.count
-    });
-    if (req.body.count + amount > 15) {
+  }).then(bookingsFound => {
+    let extra = 0 
+    bookingsFound.forEach(booking => { 
+      if(booking.count>6) extra++
+    })
+    if (bookingsFound.length+extra >= 15) {
       res.send({
         success: false
       })
