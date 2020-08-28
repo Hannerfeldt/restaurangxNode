@@ -84,23 +84,23 @@ router.post("/deleteall", async (req, res) => {
 });
 
 router.post("/availability", async (req, res) => {
-
   BookingModel.find({
     date: req.body.date,
     time: req.body.time,
-  }).then((bookingsFound)=> {
+  }).then((bookingsFound) => {
     let extra = 0;
-    let othersuccess = false;
+    let othersuccess;
     bookingsFound.forEach((booking) => {
       if (booking.count > 6) extra++;
     });
     if (bookingsFound.length + extra >= 15) {
+      console.log(req.body.time == 21 ? 18 : 21);
       BookingModel.find({
         date: req.body.date,
         time: req.body.time == 21 ? 18 : 21,
       }).then((othertime) => {
         let extra = 0;
-        
+        console.log(othertime);
         othertime.forEach((booking) => {
           if (booking.count > 6) extra++;
         });
