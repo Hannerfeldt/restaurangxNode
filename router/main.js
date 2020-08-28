@@ -4,6 +4,7 @@ const router = express.Router();
 const BookingModel = require("../models/booking");
 const GuestModel = require("../models/guest");
 
+
 router.get("/", (req, res) => {
   res.render("index");
 });
@@ -83,13 +84,15 @@ router.post("/deleteall", async (req, res) => {
   await GuestModel.deleteMany({});
 });
 
+let othersuccess
+
 router.post("/availability", async (req, res) => {
+
   BookingModel.find({
     date: req.body.date,
     time: req.body.time,
   }).then((bookingsFound) => {
     let extra = 0;
-    let othersuccess;
     bookingsFound.forEach((booking) => {
       if (booking.count > 6) extra++;
     });
@@ -110,14 +113,15 @@ router.post("/availability", async (req, res) => {
           othersuccess = true;
         }
       });
+
       res.send({
         success: false,
-        othersuccess: othersuccess,
+        othersuccess
       });
     } else {
       res.send({
         success: true,
-        othersuccess: othersuccess,
+        othersuccess,
       });
     }
   });
