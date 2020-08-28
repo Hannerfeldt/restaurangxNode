@@ -97,7 +97,7 @@ router.post("/availability", async (req, res) => {
       if (booking.count > 6) extra++;
     });
     if (bookingsFound.length + extra >= 15) {
-      console.log(req.body.time == 21 ? 18 : 21);
+  
       BookingModel.find({
         date: req.body.date,
         time: req.body.time == 21 ? 18 : 21,
