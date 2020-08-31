@@ -11,13 +11,11 @@ router.get("/", (req, res) => {
 
 router.get("/guest", async (req, res) => {
   const guest = await GuestModel.find();
-
   res.send(guest);
 });
 
 router.get("/table", async (req, res) => {
   const booking = await BookingModel.find();
-
   res.send(booking);
 });
 
@@ -25,8 +23,6 @@ router.post("/table", async (req, res) => {
   const latest = await BookingModel.findOne().sort({
     id: -1,
   });
-
-  console.log(latest);
 
   new BookingModel({
     count: req.body.tables.count,
@@ -125,7 +121,6 @@ router.post("/availability", async (req, res) => {
       });
     }
   });
-  //res.send({available: available})
 });
 
 module.exports = router;
