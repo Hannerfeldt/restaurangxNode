@@ -5,8 +5,8 @@ let Schema = mongoose.Schema;
 const BookingSchema = new Schema({
   count: Number,
   date: Date,
-  time: String,
-  guestId: String,
+  time: Number,
+  guestId: Number,
   id: Number,
 });
 
