@@ -6,6 +6,7 @@ const BookingSchema = new Schema({
   count: Number,
   date: Date,
   time: Number,
+  table: Number,
   guestId: Number,
   id: Number,
 });

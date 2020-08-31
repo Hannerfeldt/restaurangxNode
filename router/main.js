@@ -26,14 +26,13 @@ router.post("/table", async (req, res) => {
     id: -1,
   });
 
-  console.log(latest);
+  let tables = Math.ceil(req.body.tables.count/6) || 1;
 
-  const booking = BookingModel.find({date: req.body.date, time: req.body.time});
-  console.log("XXXXXXXXXXXX CONSOLE LOG BOOKING", booking);
   new BookingModel({
     count: req.body.tables.count,
     date: req.body.tables.date,
     time: req.body.tables.time,
+    table: tables,
     guestId: req.body.guestId,
     id: latest ? latest.id + 1 : 1000,
   }).save();
@@ -48,22 +47,12 @@ router.post("/guest", async (req, res) => {
   const registered = await GuestModel.findOne({
     email: req.body.email,
   });
-
-  if (registered) {
-    guestId = registered.id;
-
-    new GuestModel({
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      email: req.body.email,
-      phonenr: req.body.phonenr,
-      id: registered.id,
-    }).save();
-  } else {
+  console.log(registered);
+  if (!registered) {
     const latest = await GuestModel.findOne().sort({
       id: -1,
     });
-
+    
     if (latest) guestId = latest.id + 1;
     else guestId = 1000;
 
@@ -74,6 +63,9 @@ router.post("/guest", async (req, res) => {
       phonenr: req.body.phonenr,
       id: guestId,
     }).save();
+    
+  } else {
+    guestId = registered.id;
   }
 
   res.send({
@@ -89,27 +81,28 @@ router.post("/deleteall", async (req, res) => {
 let othersuccess
 
 router.post("/availability", async (req, res) => {
-
   BookingModel.find({
     date: req.body.date,
     time: req.body.time,
   }).then((bookingsFound) => {
-    let extra = 0;
+    let tableCapacity = 0;
+    // let extra = 0;
     bookingsFound.forEach((booking) => {
-      if (booking.count > 6) extra++;
+      tableCapacity += booking.table;
     });
-    if (bookingsFound.length + extra >= 15) {
+
+    if (tableCapacity + Math.ceil(req.body.count/6) > 15) {
   
       BookingModel.find({
         date: req.body.date,
         time: req.body.time == 21 ? 18 : 21,
       }).then((othertime) => {
-        let extra = 0;
-        console.log(othertime);
+        let tables = 0;   
         othertime.forEach((booking) => {
-          if (booking.count > 6) extra++;
+             tables += booking.table;
         });
-        if (othertime.length + extra >= 15) {
+
+        if (tables >= 15) {
           othersuccess = false;
         } else {
           othersuccess = true;
@@ -127,7 +120,6 @@ router.post("/availability", async (req, res) => {
       });
     }
   });
-  //res.send({available: available})
 });
 
 module.exports = router;
