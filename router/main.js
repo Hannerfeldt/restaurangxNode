@@ -43,17 +43,7 @@ router.post("/guest", async (req, res) => {
     email: req.body.email,
   });
 
-  if (registered) {
-    guestId = registered.id;
-
-    new GuestModel({
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      email: req.body.email,
-      phonenr: req.body.phonenr,
-      id: registered.id,
-    }).save();
-  } else {
+  if (!registered) {
     const latest = await GuestModel.findOne().sort({
       id: -1,
     });
@@ -68,12 +58,34 @@ router.post("/guest", async (req, res) => {
       phonenr: req.body.phonenr,
       id: guestId,
     }).save();
-  }
+  } else guestId = registered.id;
+
 
   res.send({
     guestId,
   });
 });
+
+router.delete("/unbook/:id", async (req, res) => {
+
+  await BookingModel.deleteOne({
+    id: req.params.id
+  })
+
+  res.send()
+})
+
+router.put("/edit/:id", async (req, res) => {
+
+  const updated = await BookingModel.updateOne({
+    id: req.params.id
+  }, {
+    date: req.body.date,
+    time: req.body.time,
+    count: req.body.count
+  })
+
+})
 
 router.post("/deleteall", async (req, res) => {
   await BookingModel.deleteMany({});
@@ -93,7 +105,7 @@ router.post("/availability", async (req, res) => {
       if (booking.count > 6) extra++;
     });
     if (bookingsFound.length + extra >= 15) {
-  
+
       BookingModel.find({
         date: req.body.date,
         time: req.body.time == 21 ? 18 : 21,
