@@ -4,9 +4,9 @@ const router = express.Router();
 const BookingModel = require("../models/booking");
 const GuestModel = require("../models/guest");
 
-router.get("/",(req, res) => {
+router.get("/", (req, res) => {
 
- res.render("index");
+  res.render("index");
 
 });
 
@@ -27,14 +27,21 @@ router.get("/table", async (req, res) => {
 });
 
 router.post("/table", async (req, res) => {
-
+  console.log(req.body)
   new BookingModel({
-    count: 4,
-    date: new Date(2020, 08, 05),
-    time: 18.00,
-    guestId: 999,
-    id: 3,
-  }).save();
+      count: req.body.count,
+      date: req.body.date,
+      time: req.body.time,
+      guestId: 99,
+      id: 30
+  }).save()
+  // new BookingModel({
+  //   count: 4,
+  //   date: new Date(2020, 08, 05),
+  //   time: 18.00,
+  //   guestId: 999,
+  //   id: 3,
+  // }).save();
 
 });
 
