@@ -24,16 +24,18 @@ router.post("/table", async (req, res) => {
     id: -1,
   });
 
+  let tables = Math.ceil(req.body.tables.count/6);
+
   new BookingModel({
     count: req.body.tables.count,
     date: req.body.tables.date,
     time: req.body.tables.time,
+    table: tables,
     guestId: req.body.guestId,
     id: latest ? latest.id + 1 : 1000,
   }).save();
 
-  res.send({
-    
+  res.send({   
     success: true,
   });
 });
@@ -43,12 +45,11 @@ router.post("/guest", async (req, res) => {
   const registered = await GuestModel.findOne({
     email: req.body.email,
   });
-
   if (!registered) {
     const latest = await GuestModel.findOne().sort({
       id: -1,
     });
-
+    
     if (latest) guestId = latest.id + 1;
     else guestId = 1000;
 
@@ -60,7 +61,6 @@ router.post("/guest", async (req, res) => {
       id: guestId,
     }).save();
   } else guestId = registered.id;
-
 
   res.send({
     guestId,
@@ -78,7 +78,7 @@ router.delete("/unbook/:id", async (req, res) => {
 
 router.put("/edit/:id", async (req, res) => {
 
-  const updated = await BookingModel.updateOne({
+  await BookingModel.updateOne({
     id: req.params.id
   }, {
     date: req.body.date,
@@ -86,6 +86,7 @@ router.put("/edit/:id", async (req, res) => {
     count: req.body.count
   })
 
+  res.send()
 })
 
 router.post("/deleteall", async (req, res) => {
@@ -112,10 +113,11 @@ router.post("/availability", async (req, res) => {
         date: req.body.date,
         time: req.body.time == 21 ? 18 : 21,
       }).then((othertime) => {
-        let tables = 0;
+        let tables = 0;   
         othertime.forEach((booking) => {
-          tables += Math.ceil(booking.count/6)
+             tables += booking.table;
         });
+
         if (tables >= 15) {
           othersuccess = false;
         } else {
