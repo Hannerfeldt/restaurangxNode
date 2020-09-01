@@ -11,7 +11,6 @@ router.get("/", (req, res) => {
 
 router.get("/guest", async (req, res) => {
   const guest = await GuestModel.find();
-
   res.send(guest);
 });
 
@@ -34,6 +33,7 @@ router.post("/table", async (req, res) => {
   }).save();
 
   res.send({
+    
     success: true,
   });
 });
@@ -44,17 +44,7 @@ router.post("/guest", async (req, res) => {
     email: req.body.email,
   });
 
-  if (registered) {
-    guestId = registered.id;
-
-    new GuestModel({
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      email: req.body.email,
-      phonenr: req.body.phonenr,
-      id: registered.id,
-    }).save();
-  } else {
+  if (!registered) {
     const latest = await GuestModel.findOne().sort({
       id: -1,
     });
@@ -69,12 +59,34 @@ router.post("/guest", async (req, res) => {
       phonenr: req.body.phonenr,
       id: guestId,
     }).save();
-  }
+  } else guestId = registered.id;
+
 
   res.send({
     guestId,
   });
 });
+
+router.delete("/unbook/:id", async (req, res) => {
+
+  await BookingModel.deleteOne({
+    id: req.params.id
+  })
+
+  res.send()
+})
+
+router.put("/edit/:id", async (req, res) => {
+
+  const updated = await BookingModel.updateOne({
+    id: req.params.id
+  }, {
+    date: req.body.date,
+    time: req.body.time,
+    count: req.body.count
+  })
+
+})
 
 router.post("/deleteall", async (req, res) => {
   await BookingModel.deleteMany({});
@@ -122,7 +134,6 @@ router.post("/availability", async (req, res) => {
       });
     }
   });
-  //res.send({available: available})
 });
 
 module.exports = router;
