@@ -20,6 +20,7 @@ router.get("/table", async (req, res) => {
 });
 
 router.post("/table", async (req, res) => {
+
   const latest = await BookingModel.findOne().sort({
     id: -1,
   });
