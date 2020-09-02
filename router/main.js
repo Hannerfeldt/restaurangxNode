@@ -1,3 +1,5 @@
+const nodemailer = require('nodemailer');
+const config = require("../config/config");
 const express = require("express");
 const router = express.Router();
 
@@ -34,9 +36,39 @@ router.post("/table", async (req, res) => {
     id: latest ? latest.id + 1 : 1000,
   }).save();
 
+  const guest = await GuestModel.findOne({
+    id: req.body.guestId,
+  });
+
+  let sendFrom = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: config.email,
+      pass: config.password,
+    }
+  });
+  
+  let mailContent = {
+    from: "booking@restaurangx.se",
+    to: guest.email,
+    subject: "Welcome to Restaurang X, here's your bookingnumber.",
+    text: `Welcome to Restaurang X ${guest.firstname + " " + guest.lastname}. Your reservation is at ${req.body.tables.date.toString().slice(0, 10)}, ${req.body.tables.time}:00. 
+    If you wish to make any changes to your reservation, call us on 08-XXX XXX. Your bookingnumber is: ${guest.id}`,
+  };
+  
+  sendFrom.sendMail(mailContent, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent (info.respsonse): ', info.response);
+    }
+  
+  });
+
   res.send({
     success: true,
   });
+
 });
 
 router.post("/guest", async (req, res) => {
@@ -61,30 +93,60 @@ router.post("/guest", async (req, res) => {
     }).save();
   } else guestId = registered.id;
 
+
   res.send({
     guestId,
   });
+
 });
 
 router.delete("/unbook/:id", async (req, res) => {
-  await BookingModel.deleteOne({
+  const booking = await BookingModel.findOne({
     id: req.params.id,
   });
+  console.log("this is booking", booking)
+  const guest = await GuestModel.findOne({
+    id: booking.guestId,
+  });
 
+  let sendFrom = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: config.email,
+      pass: config.password,
+    }
+  });
+
+  let mailContent = {
+    from: "booking@restaurangx.se",
+    to: guest.email,
+    subject: "Confirmation for removed booking.",
+    text: `Hello ${guest.firstname + " " + guest.lastname}. You're reservation at ${booking.date.toString().slice(0, 10)},
+    ${booking.time}:00 has been removed.`,
+  };
+
+  sendFrom.sendMail(mailContent, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent (info.respsonse): ', info.response);
+    }
+
+  });
+
+  booking.delete();
   res.send();
+
 });
 
 router.put("/edit/:id", async (req, res) => {
-  await BookingModel.updateOne(
-    {
-      id: req.params.id,
-    },
-    {
-      date: req.body.date,
-      time: req.body.time,
-      count: req.body.count,
-    }
-  );
+  await BookingModel.updateOne({
+    id: req.params.id,
+  }, {
+    date: req.body.date,
+    time: req.body.time,
+    count: req.body.count,
+  });
 
   res.send();
 });
@@ -141,7 +203,7 @@ router.post("/filter", async (req, res) => {
   console.log(req.body);
   const dateFound = await BookingModel.find({
     date: req.body.date,
-     });
+  });
   console.log(dateFound)
   res.send(dateFound)
 });
