@@ -26,7 +26,7 @@ router.post("/table", async (req, res) => {
     id: -1,
   });
 
-  let tables = Math.ceil(req.body.tables.count/6) || 1;
+  let tables = Math.ceil(req.body.tables.count/6);
 
   new BookingModel({
     count: req.body.tables.count,
