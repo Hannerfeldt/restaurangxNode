@@ -200,12 +200,30 @@ router.post("/availability", async (req, res) => {
 });
 
 router.post("/filter", async (req, res) => {
-  console.log(req.body);
-  const dateFound = await BookingModel.find({
-    date: req.body.date,
-  });
-  console.log(dateFound)
-  res.send(dateFound)
+
+  if (req.body.date) {
+
+    const dateFound = await BookingModel.find({
+      date: req.body.date,
+    });
+    res.send(dateFound)
+  } else {
+    const guestIdFound = await BookingModel.find({
+      guestId: req.body.data  
+    })
+    
+    res.send(guestIdFound)
+  }
 });
+
+router.post("/findname", async (req, res)=> {
+  
+  const guestFound = await GuestModel.findOne({
+    firstname: req.body.filterName.firstname,
+    lastname: req.body.filterName.lastname
+  })
+
+  res.send(guestFound)
+})
 
 module.exports = router;
