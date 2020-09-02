@@ -98,6 +98,7 @@ router.post("/deleteall", async (req, res) => {
 let othersuccess;
 
 router.post("/availability", async (req, res) => {
+
   BookingModel.find({
     date: req.body.date,
     time: req.body.time,
