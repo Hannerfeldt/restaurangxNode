@@ -21,6 +21,7 @@ router.get("/table", async (req, res) => {
 });
 
 router.post("/table", async (req, res) => {
+
   const latest = await BookingModel.findOne().sort({
     id: -1,
   });
@@ -161,6 +162,7 @@ router.post("/deleteall", async (req, res) => {
 let othersuccess;
 
 router.post("/availability", async (req, res) => {
+
   BookingModel.find({
     date: req.body.date,
     time: req.body.time,
