@@ -26,7 +26,7 @@ router.post("/table", async (req, res) => {
   });
 
   let tables = Math.ceil(req.body.tables.count / 6);
-
+  
   new BookingModel({
     count: req.body.tables.count,
     date: req.body.tables.date,
@@ -104,7 +104,9 @@ router.delete("/unbook/:id", async (req, res) => {
   const booking = await BookingModel.findOne({
     id: req.params.id,
   });
+
   console.log("this is booking", booking)
+
   const guest = await GuestModel.findOne({
     id: booking.guestId,
   });
@@ -200,12 +202,12 @@ router.post("/availability", async (req, res) => {
 });
 
 router.post("/filter", async (req, res) => {
-
   if (req.body.date) {
-
+    console.log(req.body.date.slice(0,10)+"T22:00:00.000Z")
     const dateFound = await BookingModel.find({
-      date: req.body.date,
+      date: req.body.date.slice(0,10)+"T22:00:00.000Z"
     });
+    console.log(dateFound)
     res.send(dateFound)
   } else {
     const guestIdFound = await BookingModel.find({
