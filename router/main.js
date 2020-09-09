@@ -27,10 +27,10 @@ router.post("/table", async (req, res) => {
   });
 
   let tables = Math.ceil(req.body.tables.count / 6);
-  
+
   new BookingModel({
     count: req.body.tables.count,
-    date: req.body.tables.date.slice(0,10)+"T00:00:00.000Z",
+    date: req.body.tables.date.slice(0, 10) + "T00:00:00.000Z",
     time: req.body.tables.time,
     table: tables,
     guestId: req.body.guestId,
@@ -48,7 +48,7 @@ router.post("/table", async (req, res) => {
       pass: config.password,
     }
   });
-  
+
   let mailContent = {
     from: "booking@restaurangx.se",
     to: guest.email,
@@ -56,14 +56,14 @@ router.post("/table", async (req, res) => {
     text: `Welcome to Restaurang X ${guest.firstname + " " + guest.lastname}. Your reservation is at ${req.body.tables.date.toString().slice(0, 10)}, ${req.body.tables.time}:00. 
     If you wish to make any changes to your reservation, call us on 08-XXX XXX. Your bookingnumber is: ${guest.id}`,
   };
-  
+
   sendFrom.sendMail(mailContent, function (error, info) {
     if (error) {
       console.log(error);
     } else {
       console.log('Email sent (info.respsonse): ', info.response);
     }
-  
+
   });
 
   // res.send({
@@ -108,7 +108,7 @@ router.delete("/unbook/:id", async (req, res) => {
     id: req.params.id,
   });
 
-  console.log("this is booking", booking)
+
 
   const guest = await GuestModel.findOne({
     id: booking.guestId,
@@ -148,7 +148,7 @@ router.put("/edit/:id", async (req, res) => {
   await BookingModel.updateOne({
     id: req.params.id,
   }, {
-    date: req.body.date.slice(0,10)+"T00:00:00.000Z",
+    date: req.body.date.slice(0, 10) + "T00:00:00.000Z",
     time: req.body.time,
     count: req.body.count,
   });
@@ -205,25 +205,26 @@ router.post("/availability", async (req, res) => {
   });
 });
 
+
 router.post("/filter", async (req, res) => {
   if (req.body.date) {
-    console.log(req.body.date.slice(0,10)+"T00:00:00.000Z")
+
     const dateFound = await BookingModel.find({
-      date: req.body.date.slice(0,10)+"T00:00:00.000Z"
+      date: req.body.date.slice(0, 10) + "T00:00:00.000Z"
     });
-    console.log(dateFound)
+
     res.send(dateFound)
   } else {
     const guestIdFound = await BookingModel.find({
-      guestId: req.body.data  
+      guestId: req.body.data
     })
-    
+
     res.send(guestIdFound)
   }
 });
 
-router.post("/findname", async (req, res)=> {
-  
+router.post("/findname", async (req, res) => {
+
   const guestFound = await GuestModel.findOne({
     firstname: req.body.filterName.firstname,
     lastname: req.body.filterName.lastname
