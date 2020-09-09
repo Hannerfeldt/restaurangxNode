@@ -30,7 +30,7 @@ router.post("/table", async (req, res) => {
   
   new BookingModel({
     count: req.body.tables.count,
-    date: req.body.tables.date,
+    date: req.body.tables.date.slice(0,10)+"T00:00:00.000Z",
     time: req.body.tables.time,
     table: tables,
     guestId: req.body.guestId,
@@ -148,7 +148,7 @@ router.put("/edit/:id", async (req, res) => {
   await BookingModel.updateOne({
     id: req.params.id,
   }, {
-    date: req.body.date,
+    date: req.body.date.slice(0,10)+"T00:00:00.000Z",
     time: req.body.time,
     count: req.body.count,
   });
@@ -207,9 +207,9 @@ router.post("/availability", async (req, res) => {
 
 router.post("/filter", async (req, res) => {
   if (req.body.date) {
-    console.log(req.body.date.slice(0,10)+"T22:00:00.000Z")
+    console.log(req.body.date.slice(0,10)+"T00:00:00.000Z")
     const dateFound = await BookingModel.find({
-      date: req.body.date.slice(0,10)+"T22:00:00.000Z"
+      date: req.body.date.slice(0,10)+"T00:00:00.000Z"
     });
     console.log(dateFound)
     res.send(dateFound)
