@@ -66,13 +66,9 @@ router.post("/table", async (req, res) => {
 
   });
 
-  // res.send({
-  //   success: true,
-  // });
-  res.redirect("http://localhost:3000/cyal8ralig8r")
+  res.send();
+
 });
-
-
 
 router.post("/guest", async (req, res) => {
   let guestId;
